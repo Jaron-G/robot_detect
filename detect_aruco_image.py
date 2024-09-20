@@ -7,26 +7,44 @@ import imutils
 import cv2
 import sys
 import numpy as np
+
 # 构造参数解析器并解析参数
 ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--image", required=True, help="Path to the input image containing the ArUCo tag")
-ap.add_argument("-t", "--type", type=str, default="DICT_ARUCO_ORIGINAL", help="Tpe of ArUCo tag to detect")
+ap.add_argument(
+    "-i",
+    "--image",
+    required=True,
+    help="Path to the input image containing the ArUCo tag",
+)
+ap.add_argument(
+    "-t", "--type", type=str, default="DICT_4X4_50", help="Tpe of ArUCo tag to detect"
+)
 args = vars(ap.parse_args())
 
 # 定义 OpenCV 支持的每个可能的 ArUco 标签的名称
-ARUCO_DICT = {"DICT_4X4_50": cv2.aruco.DICT_4X4_50, "DICT_4X4_100": cv2.aruco.DICT_4X4_100,
-              "DICT_4X4_250": cv2.aruco.DICT_4X4_250, "DICT_4X4_1000": cv2.aruco.DICT_4X4_1000,
-              "DICT_5X5_50": cv2.aruco.DICT_5X5_50, "DICT_5X5_100": cv2.aruco.DICT_5X5_100,
-              "DICT_5X5_250": cv2.aruco.DICT_5X5_250, "DICT_5X5_1000": cv2.aruco.DICT_5X5_1000,
-              "DICT_6X6_50": cv2.aruco.DICT_6X6_50, "DICT_6X6_100": cv2.aruco.DICT_6X6_100,
-              "DICT_6X6_250": cv2.aruco.DICT_6X6_250, "DICT_6X6_1000": cv2.aruco.DICT_6X6_1000,
-              "DICT_7X7_50": cv2.aruco.DICT_7X7_50, "DICT_7X7_100": cv2.aruco.DICT_7X7_100,
-              "DICT_7X7_250": cv2.aruco.DICT_7X7_250, "DICT_7X7_1000": cv2.aruco.DICT_7X7_1000,
-              "DICT_ARUCO_ORIGINAL": cv2.aruco.DICT_ARUCO_ORIGINAL,
-              "DICT_APRILTAG_16h5": cv2.aruco.DICT_APRILTAG_16h5,
-              "DICT_APRILTAG_25h9": cv2.aruco.DICT_APRILTAG_25h9,
-              "DICT_APRILTAG_36h10": cv2.aruco.DICT_APRILTAG_36h10,
-              "DICT_APRILTAG_36h11": cv2.aruco.DICT_APRILTAG_36h11}
+ARUCO_DICT = {
+    "DICT_4X4_50": cv2.aruco.DICT_4X4_50,
+    "DICT_4X4_100": cv2.aruco.DICT_4X4_100,
+    "DICT_4X4_250": cv2.aruco.DICT_4X4_250,
+    "DICT_4X4_1000": cv2.aruco.DICT_4X4_1000,
+    "DICT_5X5_50": cv2.aruco.DICT_5X5_50,
+    "DICT_5X5_100": cv2.aruco.DICT_5X5_100,
+    "DICT_5X5_250": cv2.aruco.DICT_5X5_250,
+    "DICT_5X5_1000": cv2.aruco.DICT_5X5_1000,
+    "DICT_6X6_50": cv2.aruco.DICT_6X6_50,
+    "DICT_6X6_100": cv2.aruco.DICT_6X6_100,
+    "DICT_6X6_250": cv2.aruco.DICT_6X6_250,
+    "DICT_6X6_1000": cv2.aruco.DICT_6X6_1000,
+    "DICT_7X7_50": cv2.aruco.DICT_7X7_50,
+    "DICT_7X7_100": cv2.aruco.DICT_7X7_100,
+    "DICT_7X7_250": cv2.aruco.DICT_7X7_250,
+    "DICT_7X7_1000": cv2.aruco.DICT_7X7_1000,
+    "DICT_ARUCO_ORIGINAL": cv2.aruco.DICT_ARUCO_ORIGINAL,
+    "DICT_APRILTAG_16h5": cv2.aruco.DICT_APRILTAG_16h5,
+    "DICT_APRILTAG_25h9": cv2.aruco.DICT_APRILTAG_25h9,
+    "DICT_APRILTAG_36h10": cv2.aruco.DICT_APRILTAG_36h10,
+    "DICT_APRILTAG_36h11": cv2.aruco.DICT_APRILTAG_36h11,
+}
 
 # 从磁盘加载输入图像并调整其大小
 print("[INFO] Loading image...")
@@ -43,22 +61,24 @@ print("[INFO] Detecting '{}' tags...".format(args["type"]))
 arucoDict = cv2.aruco.getPredefinedDictionary(ARUCO_DICT[args["type"]])
 arucoParams = cv2.aruco.DetectorParameters()
 
-arucodetector = cv2.aruco.ArucoDetector(dictionary= arucoDict, detectorParams=arucoParams)
+arucodetector = cv2.aruco.ArucoDetector(
+    dictionary=arucoDict, detectorParams=arucoParams
+)
 (corners, ids, rejected) = arucodetector.detectMarkers(image)
 
 # cameraMatrix = np.array([913.617065, 0, 960.503906,
 #                          0, 913.455261, 550.489502,
 #                          0, 0, 1]).reshape(3,3)
-cameraMatrix = np.array([762.725, 0, 640.5,
-                        0, 762.725, 640.5,
-                        0, 0, 1]).reshape(3,3)
+cameraMatrix = np.array([762.725, 0, 640.5, 0, 762.725, 640.5, 0, 0, 1]).reshape(3, 3)
 dist = np.array([0.0515398, -0.00872068, 0.000730499, 0.000393782, 0.0000648475])
-distCoeffs = dist[0:5].reshape(1,5)
+distCoeffs = dist[0:5].reshape(1, 5)
 cv2.aruco.drawDetectedMarkers(image, corners, ids, (0, 255, 0))
-cv2.imshow("kk",image)
+cv2.imshow("kk", image)
 
 
-rvecs, tvecs,kkk = cv2.aruco.estimatePoseSingleMarkers(corners[0], 50, cameraMatrix, distCoeffs)
+rvecs, tvecs, kkk = cv2.aruco.estimatePoseSingleMarkers(
+    corners[0], 50, cameraMatrix, distCoeffs
+)
 
 print(rvecs, tvecs)
 print(len(rvecs))
@@ -70,6 +90,7 @@ cv2.imshow("pose", image)
 cv2.waitKey(0)
 
 import matplotlib.pyplot as plt
+
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # 转换代码
 plt.imshow(image)
 plt.show()
@@ -114,16 +135,13 @@ def rodrigues_rotation(r, theta):
     # 旋转是过原点的，n是旋转轴
     r = np.array(r).reshape(3, 1)
     rx, ry, rz = r[:, 0]
-    M = np.array([
-        [0, -rz, ry],
-        [rz, 0, -rx],
-        [-ry, rx, 0]
-    ])
-    R = np.zeros([3,3])
-    R[:3, :3] = np.cos(theta) * np.eye(3) +        \
-                (1 - np.cos(theta)) * r @ r.T +    \
-                np.sin(theta) * M
+    M = np.array([[0, -rz, ry], [rz, 0, -rx], [-ry, rx, 0]])
+    R = np.zeros([3, 3])
+    R[:3, :3] = (
+        np.cos(theta) * np.eye(3) + (1 - np.cos(theta)) * r @ r.T + np.sin(theta) * M
+    )
     return R
+
 
 def rodrigues_rotation_vec_to_R(v):
     # r旋转向量[3x1]
@@ -131,7 +149,8 @@ def rodrigues_rotation_vec_to_R(v):
     r = np.array(v).reshape(3, 1) / theta
     return rodrigues_rotation(r, theta)
 
-v = np.array([-2.89574422, -0.03344724, 0.3793738 ])
+
+v = np.array([-2.89574422, -0.03344724, 0.3793738])
 matrix = rodrigues_rotation_vec_to_R(v)
 q = tfs.quaternions.mat2quat(matrix)
 
